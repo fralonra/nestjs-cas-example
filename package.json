@@ -1,0 +1,39 @@
+{
+  "name": "nestjs-cas-example",
+  "version": "0.0.1",
+  "description": "Nestjs central authentication service (CMS) example",
+  "author": "zoron",
+  "license": "MIT",
+  "scripts": {
+    "format": "prettier --write \"**/*.ts\"",
+    "app": "ts-node -r tsconfig-paths/register app/main.ts",
+    "app:dev": "nodemon",
+    "prestart:prod": "rm -rf dist && tsc",
+    "app:prod": "node dist/app/main.js",
+    "cas:prod": "node dist/fake-server/main.js"
+  },
+  "dependencies": {
+    "@nestjs/common": "^5.3.5",
+    "@nestjs/core": "^5.3.4",
+    "config": "^2.0.1",
+    "connect-cas": "^1.8.1",
+    "cookie-parser": "^1.4.3",
+    "express-session": "^1.15.6",
+    "reflect-metadata": "^0.1.12",
+    "rxjs": "^6.3.3",
+    "typescript": "^3.0.3"
+  },
+  "devDependencies": {
+    "@types/express": "^4.0.39",
+    "@types/node": "^10.9.4",
+    "@types/supertest": "^2.0.4",
+    "nodemon": "^1.14.1",
+    "prettier": "^1.11.1",
+    "supertest": "^3.0.0",
+    "ts-jest": "^23.1.4",
+    "ts-loader": "^5.0.0",
+    "ts-node": "^7.0.1",
+    "tsconfig-paths": "^3.1.1",
+    "tslint": "5.11.0"
+  }
+}
