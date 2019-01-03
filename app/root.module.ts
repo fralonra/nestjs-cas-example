@@ -5,7 +5,7 @@ import {
   RequestMethod,
 } from '@nestjs/common';
 import { RootController } from './root.controller';
-import { AuthModule } from 'auth/auth.module';
+import { AuthModule } from './auth/auth.module';
 import { CasMiddleWare } from './cas.middleware';
 
 @Module({

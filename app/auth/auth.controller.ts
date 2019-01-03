@@ -5,26 +5,23 @@ import {
   Headers, Query, Session,
 } from '@nestjs/common';
 
+const SID_COOKIE_NAME = 'SID';
+const ST_COOKIE_NAME = 'CAS_ST';
+
 @Controller('auth')
 export class AuthController {
   @Get('login')
   login(@Res() res, @Query('to') to, @Session() session) {
-    const ticket = session.st;
+    const st = session.st;
     const user = {
-      user: session.cas.user,
-      st: ticket,
+      username: session.cas.user,
     };
-    const sessionDto = {
-      sid: session.id,
-      user,
-      loggedInTime: new Date(),
-    };
+    res.cookie(ST_COOKIE_NAME, st);
     return res.redirect(to);
   }
 
   @Get('logout')
   async logout(@Req() req, @Res() res, @Session() session) {
-    req.sessionStore.sessions = {};
     if (!session) {
       return res.redirect('/');
     }
@@ -33,14 +30,34 @@ export class AuthController {
     } else {
       session = null;
     }
-    const logoutPath = req.logoutPath;
-    return res.redirect(logoutPath);
+    res.cookie(ST_COOKIE_NAME, '');
+    res.cookie(SID_COOKIE_NAME, '');
+    return res.redirect(req.logoutPath);
   }
 
   @Get('user')
-  user(@Req() req, @Res() res, @Headers('referer') referer) {
-    const sid = Object.keys(req.sessionStore.sessions)[0];
+  user(@Req() req, @Res() res, @Headers('referer') referer, @Query('st') st) {
+    let sid = req.cookies[SID_COOKIE_NAME];
+    if (!st && !sid) return res.send({});
+    if (!sid) {
+      const sids = Object.keys(req.sessionStore.sessions);
+      for (let i in sids) {
+        const id = sids[i];
+        const session = JSON.parse(req.sessionStore.sessions[id]);
+        if (!session) break;
+        if (session.st === st) {
+          sid = id;
+          break;
+        }
+      }
+      if (!sid) return res.send({});
+      res.cookie(SID_COOKIE_NAME, sid);
+    }
     const session = JSON.parse(req.sessionStore.sessions[sid]);
-    return res.send(session.cas);
+    if (!session) return res.send({});
+    const username = session.cas.user;
+
+    res.cookie(ST_COOKIE_NAME, '');
+    return res.send(username);
   }
 }
