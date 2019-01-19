@@ -1,5 +1,4 @@
 import { URL } from 'url';
-import { Injectable, NestMiddleware, MiddlewareFunction } from '@nestjs/common';
 import * as config from 'config';
 const cas = require('connect-cas');
 
@@ -11,7 +10,7 @@ export const CasMiddleWare = {
     const isInclude = excludePaths.every(p => req.baseUrl.indexOf(p) === -1);
     if (isInclude && Object.keys(req.sessionStore.sessions).length < 1) {
       const redirectUrl = req.headers.referer || `${req.protocol}://${req.headers.host}${req.url}`;
-      return res.redirect(`/auth/login?to=${redirectUrl}`);
+      return res.redirect(`${config.baseUrl}/auth/login?to=${redirectUrl}`);
     }
     next();
   },
@@ -21,6 +20,9 @@ export const CasMiddleWare = {
   },
 
   authenticate(req, res, next) {
+    cas.configure({
+      service: config.baseUrl + req.originalUrl
+    });
     cas.authenticate()(req, res, next);
   },
 

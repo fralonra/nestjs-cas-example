@@ -6,7 +6,7 @@ An example of using [nestjs](https://github.com/nestjs/nest) to connect CAS ([Ce
 
 * Clone: `git clone https://github.com/fralonra/nestjs-cas-example`
 * Install: `cd nestjs-cas-example && yarn`
-* If you wish to use the existing fake CAS server, please run `yarn prestart:prod && yarn cas:prod`. Or you can specify your CAS server settings in `config/default.ts`.
+* If you wish to use the existing fake CAS server, please run `yarn cas:prod`. Or you can specify your CAS server settings in `config/default.ts`.
 ```javascript
 // config/default.ts
 const casHost = '127.0.0.1';

@@ -8,8 +8,10 @@
     "format": "prettier --write \"**/*.ts\"",
     "app": "ts-node -r tsconfig-paths/register app/main.ts",
     "app:dev": "nodemon",
-    "prestart:prod": "rm -rf dist && tsc",
+    "build": "rm -rf dist && tsc",
+    "preapp:prod": "npm run build",
     "app:prod": "node dist/app/main.js",
+    "precas:prod": "npm run build",
     "cas:prod": "node dist/fake-server/main.js"
   },
   "dependencies": {

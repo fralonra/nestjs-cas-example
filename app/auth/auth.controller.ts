@@ -17,6 +17,7 @@ export class AuthController {
       username: session.cas.user,
     };
     res.cookie(ST_COOKIE_NAME, st);
+    res.cookie(SID_COOKIE_NAME, '');
     return res.redirect(to);
   }
 
@@ -38,26 +39,33 @@ export class AuthController {
   @Get('user')
   user(@Req() req, @Res() res, @Headers('referer') referer, @Query('st') st) {
     let sid = req.cookies[SID_COOKIE_NAME];
+    res.cookie(ST_COOKIE_NAME, '');
     if (!st && !sid) return res.send({});
+    // If using in production environment, please don't use MemoryStorage.
+    // Use a session store listed in https://github.com/expressjs/session/blob/master/README.md#compatible-session-stores please.
+    let session;
     if (!sid) {
       const sids = Object.keys(req.sessionStore.sessions);
       for (let i in sids) {
         const id = sids[i];
-        const session = JSON.parse(req.sessionStore.sessions[id]);
-        if (!session) break;
-        if (session.st === st) {
+        const s = JSON.parse(req.sessionStore.sessions[id]);
+        if (!s) break;
+        if (s.st === st) {
           sid = id;
+          session = s;
           break;
         }
       }
       if (!sid) return res.send({});
       res.cookie(SID_COOKIE_NAME, sid);
+    } else {
+      session = JSON.parse(req.sessionStore.sessions[sid]);
     }
-    const session = JSON.parse(req.sessionStore.sessions[sid]);
     if (!session) return res.send({});
-    const username = session.cas.user;
+    const user = session.cas.user;
 
+    res.cookie(SID_COOKIE_NAME, sid);
     res.cookie(ST_COOKIE_NAME, '');
-    return res.send(username);
+    return res.send({ user });
   }
 }

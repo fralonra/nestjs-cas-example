@@ -3,6 +3,7 @@ const casHost = '127.0.0.1';
 const casPort = 8989;
 
 export default {
+  baseUrl: `http://localhost:${appPort}`,
   appServer: {
     port: appPort,
     session: {
